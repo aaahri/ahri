@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script src="{% static 'editor/ueditor/ueditor/ueditor.config.js' %}"></script>
+    <script src="{% static 'editor/ueditor/ueditor/ueditor.all.min.js' %}"></script>
+    <script src="{% static 'editor/ueditor/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'editor/ueditor/index.js' %}"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%">
+        <div style="width: 1000px;margin: auto;">
+            <script id="editor" type="text/plain">初始内容</script>
+        </div>
+    </div>
+</body>
+</html>

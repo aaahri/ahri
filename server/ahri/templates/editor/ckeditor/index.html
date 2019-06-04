@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script src="{% static 'editor/ckeditor/ckeditor.js' %}"></script>
+    <style>
+        html {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+<label for="editor"></label>
+<a href="http://192.168.1.2:8080/#/admin">111111111</a>
+<textarea name="content" id="editor">
+        &lt;p&gt;Here goes the initial content of the editor.&lt;/p&gt;
+</textarea>
+<script>
+    let editor;
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            ckfinder: {
+                uploadUrl: 'ckeditor/upload?command=QuickUpload&type=Files&responseType=json'
+            },
+            language: 'zh-cn',
+        }).then(newEditor => {
+        editor = newEditor;
+    })
+        .catch(error => {
+            console.log(error);
+        });
+</script>
+</body>
+</html>

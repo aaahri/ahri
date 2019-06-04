@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'editor/wangeditor/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'editor/wangeditor/wangEditor/release/wangEditor.min.js' %}"></script>
+    <script src="{% static 'editor/highlight.js/lib/highlight.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'editor/highlight.js/styles/a11y-dark.css' %}">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="editor">
+    <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
+    <pre><code>&lt;div&gt;你好&lt;/div&gt;
+</code></pre>
+</div>
+<input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+<script type="text/javascript">
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+    editor.customConfig.uploadImgServer = '/editor/wangeditor/upload/';
+    editor.customConfig.uploadFileName = 'FileName';
+    editor.customConfig.uploadImgParams = {
+        csrfmiddlewaretoken: document.getElementById('csrf_token').value
+    };
+    editor.create();
+    {#var highlight = require({% static 'editor/highlight.js/lib/highlight.js' %});#}
+</script>
+<script>
+    const highlightCode = () => {
+        const preEl = document.querySelectorAll("pre");
+
+        preEl.forEach(el => {
+            hljs.highlightBlock(el);
+        });
+    };
+    highlightCode();
+</script>
+</body>
+</html>

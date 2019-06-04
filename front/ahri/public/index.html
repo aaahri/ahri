@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <link rel="stylesheet" href="./static/alifonts/iconfont.css">
+  <title>AHRI - SHARING</title>
+  <style>
+    #read .content img {
+      max-width: 80%;
+      margin: 0 10%;
+    }
+
+    .prohibit_copy {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      -khtml-user-select: none;
+      user-select: none;
+    }
+
+    .a_load {
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 1s;
+      -moz-transition-property: -moz-transform;
+      -moz-transition-duration: 1s;
+      -webkit-animation: rotate 2s linear infinite;
+      -moz-animation: rotate 2s linear infinite;
+      -o-animation: rotate 2s linear infinite;
+      animation: rotate 2s linear infinite;
+    }
+
+    @-webkit-keyframes rotate {
+      from {
+        -webkit-transform: rotate(0deg)
+      }
+
+      to {
+        -webkit-transform: rotate(360deg)
+      }
+    }
+
+    @-moz-keyframes rotate {
+      from {
+        -moz-transform: rotate(0deg)
+      }
+
+      to {
+        -moz-transform: rotate(359deg)
+      }
+    }
+
+    @-o-keyframes rotate {
+      from {
+        -o-transform: rotate(0deg)
+      }
+
+      to {
+        -o-transform: rotate(359deg)
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg)
+      }
+
+      to {
+        transform: rotate(359deg)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but ahri doesn't work properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
+</html>
