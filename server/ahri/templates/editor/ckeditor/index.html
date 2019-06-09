@@ -5,15 +5,33 @@
     <meta charset="UTF-8">
     <title>index</title>
     <script src="{% static 'editor/ckeditor/ckeditor.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <style>
         html {
             overflow-x: hidden;
+        }
+
+        #editor {
+            height: 500px;
+        }
+
+        .ck-editor__editable {
+            min-height: 500px;
         }
     </style>
 </head>
 <body>
 <label for="editor"></label>
-<a href="http://192.168.1.2:8080/#/admin">111111111</a>
+{#<a href="http://192.168.1.2:8080/#/admin">{{ data }}</a>#}
+
+<div class="container-fluid">
+    <select class="form-control">
+        {% for datum in data %}
+            <option>{{ datum.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+<br><br><br><br>
 <textarea name="content" id="editor">
         &lt;p&gt;Here goes the initial content of the editor.&lt;/p&gt;
 </textarea>

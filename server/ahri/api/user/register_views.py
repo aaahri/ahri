@@ -20,6 +20,14 @@ class RegisterView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             email = request.GET.get('email', None)
+            tag = False
+            el = ['@gmail.com', '@qq.com', '@163.com', '@126.com', '@outlook.com', '@yahoo.com', '@sina.com',
+                  '@188.com', '@sohu.com', '@mail.com']
+            for i in el:
+                if i in email:
+                    tag = True
+            if not tag:
+                return Response({'code': 402, 'msg': '不支持该类型邮箱！', 'data': {}})
             op = request.GET.get('op', None)
             send = SendEmail()
             if op == '1':

@@ -2,3 +2,4 @@ django
 pymongo
 djangorestframework
 django-cors-headers
+pymysql

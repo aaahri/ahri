@@ -81,18 +81,17 @@ export default {
     }
   },
   mounted() {
+    let self = this;
     this.axios
       .get(url + "/api/bg_setting/", {
         params: {
           bg: "ma",
-          user_id: JSON.parse(
-            JSON.parse(localStorage.getItem("auth")).user.data
-          )._id.$oid
+          user_id: self.$store.state.user._id.$oid
         }
       })
       .then(response => {
         if (response.data.code === 200) {
-          this.bgs = JSON.parse(response.data.data);
+          self.bgs = JSON.parse(response.data.data);
         } else {
           console.log(response.data);
         }

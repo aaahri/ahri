@@ -178,10 +178,8 @@ export default {
         msg("未知错误..", "#FF9966");
         console.log(response);
       });
-    if (localStorage.getItem("auth") != null) {
-      this.user = JSON.parse(
-        JSON.parse(localStorage.getItem("auth")).user.data
-      );
+    if (this.$store.state.user != null) {
+      this.user = this.$store.state.user;
       if (this.user.role == 100) {
         this.axios
           .get(url + "/api/auth/", {

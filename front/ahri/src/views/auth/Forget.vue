@@ -116,6 +116,8 @@ export default {
               msg(this.$t("lang.auth.register.emailError"), "red");
             } else if (response.data.code === 401) {
               msg(this.$t("lang.auth.forget.emailNull"), "red");
+            } else if (response.data.code === 402) {
+              msg("不支持该类邮箱！", "red");
             } else {
               console.log(response);
             }

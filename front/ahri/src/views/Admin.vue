@@ -78,6 +78,13 @@
               </li>
             </router-link>
             <li class="line"></li>
+            <router-link to="/admin/mysql">
+              <li class="item">
+                <span class="iconfont ahrimysql"></span>
+                MySql
+              </li>
+            </router-link>
+            <li class="line"></li>
             <router-link to="/admin/myinfo">
               <li class="item">
                 <span class="iconfont ahriinfo"></span>
@@ -94,6 +101,12 @@
               <li class="item">
                 <span class="iconfont ahrisetting"></span>
                 {{$t('lang.admin.menu.setting')}}
+              </li>
+            </router-link>
+            <router-link v-if="user.role==100" to="/admin/bug">
+              <li class="item">
+                <span class="iconfont ahribug"></span>
+                BUG
               </li>
             </router-link>
           </ul>
@@ -257,6 +270,8 @@ export default {
     logout() {
       localStorage.removeItem("auth");
       this.$router.push("/");
+      window.location.reload();
+      // location.href("http://192.168.1.2:8080/");
     },
     myinfo() {
       this.$router.push("/admin/myinfo");

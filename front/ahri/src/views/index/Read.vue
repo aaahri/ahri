@@ -84,8 +84,7 @@ export default {
   },
   methods: {
     leavemessage() {
-      let auth = JSON.parse(localStorage.getItem("auth")) || false;
-      if (auth) {
+      if (this.user.role > 0) {
         let self = this;
         this.axios({
           url: url + "/api/comment/",
@@ -101,6 +100,7 @@ export default {
         }).then(
           function(response) {
             if (response.data.code === 200) {
+              console.log(response.data.data)
               self.comment.push(JSON.parse(response.data.data));
               self.lmsg = "";
               msg(self.$t("lang.newart.addsuccess"), "#2ecc71");
@@ -219,10 +219,8 @@ export default {
       .catch(response => {
         console.log(response);
       });
-    if (localStorage.getItem("auth") != null) {
-      this.user = JSON.parse(
-        JSON.parse(localStorage.getItem("auth")).user.data
-      );
+    if (this.$store.state.user != null) {
+      this.user = this.$store.state.user;
     } else {
       this.user = { role: 0 };
     }

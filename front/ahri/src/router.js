@@ -71,6 +71,14 @@ const router = new Router({
           component: () => import( /* webpackChunkName: "welcome" */ './views/admin/Welcome.vue'),
         },
         {
+          path: 'bug',
+          name: 'bug',
+          meta: {
+            required: true
+          },
+          component: () => import( /* webpackChunkName: "bug" */ './views/admin/bug.vue'),
+        },
+        {
           path: 'sysinfo',
           name: 'sysinfo',
           meta: {
@@ -114,6 +122,14 @@ const router = new Router({
             required: true
           },
           component: () => import( /* webpackChunkName: "comment" */ './views/admin/Comment.vue')
+        },
+        {
+          path: 'mysql',
+          name: 'mysql',
+          meta: {
+            required: true
+          },
+          component: () => import( /* webpackChunkName: "mysql" */ './views/database/Mysql.vue')
         },
         {
           path: 'myinfo',

@@ -1,16 +1,16 @@
 <template>
   <div id="newarticle" class="newarticle">
     <div class="title">{{$t('lang.newart.Ttitle1')}}:</div>
-    <!-- <form
+    <form
       id="go"
-      style="display:none"
       action="http://127.0.0.1:9000/editor/ckeditor/"
       method="post"
-      target="myFrame"
     >
-      <input type="text" name="user" v-model:value="user._id.$oid">
+      <input hidden type="text" name="user" v-model:value="user._id.$oid">
+      <input hidden type="text" name="type" v-model:value="n">
+      <input type="submit" value="CKEditor">
     </form>
-    <button @click="ckeditor">CKEditor</button>-->
+    <!-- <button @click="ckeditor">CKEditor</button> -->
     <input
       class="pla"
       v-model:value="article.title"
@@ -86,7 +86,8 @@ export default {
         desc: "",
         category: "",
         thumbnail: "",
-        content: ""
+        content: "",
+        editor: "quill"
       },
       content: `<br><br><pre class="ql-syntax" spellcheck="false">printf('Hello, world!'); </pre> `,
       editorOption: {},
@@ -98,7 +99,7 @@ export default {
     this.editorOption = quillRedefine({
       // 图片上传的设置
       uploadConfig: {
-        action: "http://127.0.0.1:9000/api/article/upload/", // 必填参数 图片上传地址
+        action: url + "/api/article/upload/", // 必填参数 图片上传地址
         // 必选参数  res是一个函数，函数接收的response为上传成功时服务器返回的数据
         // 你必须把返回的数据中所包含的图片地址 return 回去
         res: respnse => {

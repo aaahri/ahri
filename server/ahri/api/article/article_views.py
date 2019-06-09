@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from bson import json_util, ObjectId
 from utils.data_server import Mongo
 import time
-from ahri.settings import MEDIA_ROOT, MONGO
+from ahri.settings import MEDIA_ROOT
 from ahri.settings import D
 
 
@@ -83,6 +83,7 @@ class ArticleView(APIView):
             user = json.loads(request.body)['user']
             if user:
                 article = json.loads(request.body)['article']
+                print(article)
                 if self.col.find_one({'title': article['title'], 'author': ObjectId(user['_id']['$oid'])}):
                     return Response({'code': 401, 'msg': '文章标题重复', 'data': {}})
                 cate = self.c_col.find_one({'_id': ObjectId(article['category'])})
@@ -98,7 +99,8 @@ class ArticleView(APIView):
                     'removed': False,
                     'private': cate['private'],
                     'fabulous': 0,
-                    'collection': 0
+                    'collection': 0,
+                    'editor': article['editor']
                 }
                 x = self.col.insert(data)
                 re = self.col.find_one({"_id": ObjectId(x)})

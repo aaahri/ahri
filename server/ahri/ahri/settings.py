@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api.user.apps.UserConfig',
     'api.article.apps.ArticleConfig',
     'api.config.apps.ConfigConfig',
+    'api.database.apps.DatabaseConfig',
 
     'editor.ckeditor.apps.CkeditorConfig',
 ]
@@ -168,4 +169,12 @@ MONGO = {
     'port': '27018',
     'user': 'root',
     'pass': 'Aa12345!'
+}
+
+MYSQL_DB = {
+    'host': '111.67.206.108',
+    'port': '3306',
+    'user': 'root',
+    'pass': 'Aa12345!',
+    'db': 'mysql'
 }
