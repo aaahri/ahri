@@ -30,5 +30,5 @@ urlpatterns = [
     path('api/db/', include('api.database.urls')),
     path('editor/', include('editor.ckeditor.urls')),
     # path('editor/', include('editor.ueditor.urls')),
-    # path('editor/', include('editor.wangeditor.urls')),
+    path('editor/', include('editor.wangeditor.urls')),
 ]

@@ -1,14 +1,18 @@
 <template>
   <div id="newarticle" class="newarticle">
     <div class="title">{{$t('lang.newart.Ttitle1')}}:</div>
-    <form
-      id="go"
-      action="http://127.0.0.1:9000/editor/ckeditor/"
-      method="post"
-    >
+    <form id="go3" action="javascript:void(0)">
+      <input type="submit" id="editor3" value="待续...">
+    </form>
+    <form id="go1" action="https://www.0x0001.com/editor/ckeditor/" method="post">
       <input hidden type="text" name="user" v-model:value="user._id.$oid">
-      <input hidden type="text" name="type" v-model:value="n">
-      <input type="submit" value="CKEditor">
+      <input hidden type="text" name="type" value="n">
+      <input type="submit" id="editor1" value="CKEditor">
+    </form>
+    <form id="go2" action="https://www.0x0001.com/editor/wangeditor/" method="post">
+      <input hidden type="text" name="user" v-model:value="user._id.$oid">
+      <input hidden type="text" name="type" value="n">
+      <input type="submit" id="editor2" value="wangEditor">
     </form>
     <!-- <button @click="ckeditor">CKEditor</button> -->
     <input
@@ -260,7 +264,8 @@ export default {
           url + "/api/article/",
           Qs.stringify({
             article: JSON.stringify(self.article),
-            user: JSON.stringify(self.user)
+            user: JSON.stringify(self.user),
+            editor: "quill"
           })
         )
         .then(response => {
@@ -362,6 +367,57 @@ export default {
   border-radius: 6px;
   width: 100%;
   box-sizing: border-box;
+  #go1 {
+    float: right;
+    margin: 5px 20px;
+    #editor1 {
+      background: rgba(255, 255, 255, 0.4);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      height: 24px;
+      width: 120px;
+      cursor: pointer;
+      transition: 0.3s;
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+  #go2 {
+    float: right;
+    margin: 5px 20px;
+    #editor2 {
+      background: rgba(255, 255, 255, 0.4);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      height: 24px;
+      width: 120px;
+      cursor: pointer;
+      transition: 0.3s;
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+  #go3 {
+    float: right;
+    margin: 5px 20px;
+    #editor3 {
+      background: rgba(255, 255, 255, 0.4);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      height: 24px;
+      width: 80px;
+      cursor: pointer;
+      transition: 0.3s;
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
   .title {
     width: 100%;
     color: #fff;

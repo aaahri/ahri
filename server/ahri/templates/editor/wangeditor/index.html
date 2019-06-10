@@ -6,22 +6,139 @@
     <title>Title</title>
     <script src="{% static 'editor/wangeditor/jquery-3.3.1.min.js' %}"></script>
     <script src="{% static 'editor/wangeditor/wangEditor/release/wangEditor.min.js' %}"></script>
-    <script src="{% static 'editor/highlight.js/lib/highlight.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'editor/highlight.js/styles/a11y-dark.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <style>
-        * {
+        html {
+            overflow-x: hidden;
+        }
+
+        .give_up{
+            margin: 15px;
+            width: 120px;
+        }
+
+        .ck-editor__editable {
+        {#min-height: 500px;#}
+        }
+
+        .content {
+            padding: 20px;
+            border: 1px solid #000;
+        }
+
+        .btnUpload {
+            width: 100%;
+        }
+
+        .publish {
+            float: right;
+            width: 200px;
+            margin: 16px;
+        }
+
+        .col-sm-12 {
             padding: 0;
-            margin: 0;
+        }
+
+        #file {
+            display: none;
         }
     </style>
 </head>
 <body>
-<div id="editor">
-    <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
-    <pre><code>&lt;div&gt;你好&lt;/div&gt;
-</code></pre>
-</div>
 <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+<a class="btn btn-default give_up" href="https://www.aaahri.com/#/admin/article/">放弃</a>
+<input type="hidden" id="user_id" value="{{ user_id }}">
+<input type="hidden" id="username" value="{{ username }}">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8 content">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="title" class="col-sm-2 control-label">标题</label>
+                    <div class="col-sm-10">
+                        {% if art %}
+                            <input type="text" class="form-control" value="{{ art.title }}" id="title"
+                                   placeholder="Title">
+                        {% else %}
+                            <input type="text" class="form-control" id="title" placeholder="Title">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cate" class="col-sm-2 control-label">分类</label>
+                    <div class="col-sm-10">
+                        <select id="cate" class="form-control">
+                            {% if art %}
+                                {{ art.content }}
+                                {% for datum in data %}
+                                    {% if art.category == datum.id %}
+                                        <option value="{{ datum.id }}" selected>{{ datum.name }}</option>
+                                    {% else %}
+                                        <option value="{{ datum.id }}">{{ datum.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for datum in data %}
+                                    <option value="{{ datum.id }}">{{ datum.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cate" class="col-sm-2 control-label">缩略图</label>
+                    <div class="col-sm-8">
+                        {% if art %}
+                            <input type="text" class="form-control" id="thumbnail" value="{{ art.thumbnail }}"
+                                   placeholder="Thumbnail">
+                        {% else %}
+                            <input type="text" class="form-control" id="thumbnail" value="{{ data.0.thumbnail }}"
+                                   placeholder="Thumbnail">
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="file" class="btn btn-default btnUpload">上传</label>
+                        <input id="file" type="file" onchange="upload()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="desc" class="col-sm-2 control-label">描述</label>
+                    <div class="col-sm-10">
+                        {% if art %}
+                            <textarea id="desc" class="form-control" rows="3"
+                                      placeholder="Desc">{{ art.desc }}</textarea>
+                        {% else %}
+                            <textarea id="desc" class="form-control" rows="3" placeholder="Desc"></textarea>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+            <br>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div id="editor">
+                        {% if art %}
+                            {{ art.content }}
+                        {% else %}
+                            <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if art %}
+                <button class="btn btn-default publish" onclick="edit()">提交更改</button>
+            {% else %}
+                <button class="btn btn-default publish" onclick="pub()">发表文章</button>
+            {% endif %}
+        </div>
+        <div class="col-xs-2"></div>
+    </div>
+    <br><br><br><br>
+    <input type="hidden" id="art_id" value="{{ art_id }}">
+</div>
+<script src="{% static 'jquery.min.js' %}"></script>
 <script type="text/javascript">
     var E = window.wangEditor;
     var editor = new E('#editor');
@@ -31,17 +148,104 @@
         csrfmiddlewaretoken: document.getElementById('csrf_token').value
     };
     editor.create();
-    {#var highlight = require({% static 'editor/highlight.js/lib/highlight.js' %});#}
-</script>
-<script>
-    const highlightCode = () => {
-        const preEl = document.querySelectorAll("pre");
 
-        preEl.forEach(el => {
-            hljs.highlightBlock(el);
+    function upload() {
+        let formData = new FormData();
+        formData.append("thumbnail", $("#file")[0].files[0]);
+        formData.append("username", $("#username").val());
+        $.ajax({
+            url: "http://127.0.0.1:9000/api/article/upload/",
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $("#thumbnail").val(data.url);
+            },
+            error: function (data) {
+                console.log(data);
+            }
         });
-    };
-    highlightCode();
+    }
+
+    function pub() {
+        let art = {
+            _id: "",
+            title: $("#title").val(),
+            desc: $("#desc").val(),
+            category: $("#cate").val(),
+            thumbnail: $("#thumbnail").val(),
+            content: $("#editor").html(),
+            editor: "wangeditor"
+        };
+        let user = {
+            _id: {
+                $oid: $("#user_id").val()
+            },
+            username: $("#username").val()
+        };
+        $.ajax({
+            url: "https://www.0x0001.com/api/article/",
+            type: 'POST',
+            data: JSON.stringify({
+                article: art,
+                user: user
+            }),
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code === 200) {
+                    window.location.href = "https://www.aaahri.com/#/admin/article/";
+                } else {
+                    alert("ERROR!" + data.msg);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function edit() {
+        let art = {
+            _id: $("#art_id").val(),
+            title: $("#title").val(),
+            desc: $("#desc").val(),
+            category: $("#cate").val(),
+            thumbnail: $("#thumbnail").val(),
+            content: $("#editor").html(),
+            editor: "wangeditor"
+        };
+        let user = {
+            _id: {
+                $oid: $("#user_id").val()
+            },
+            username: $("#username").val()
+        };
+        $.ajax({
+            url: "https://www.0x0001.com/api/article/",
+            type: "PUT",
+            data: {
+                article: JSON.stringify(art),
+                user: JSON.stringify(user),
+                editor: "ckeditor"
+            },
+            headers: {
+                "Content-Type": "application/json",
+                "X-HTTP-Method-Override": "PUT"
+            },
+            success: function (data) {
+                if (data.code === 200) {
+                    window.location.href = "https://www.aaahri.com/#/admin/article/";
+                } else {
+                    alert("ERROR!" + data.msg);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 </script>
 </body>
 </html>

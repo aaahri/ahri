@@ -1,13 +1,13 @@
-from bson import ObjectId, json_util
+from bson import ObjectId
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.conf import settings
 import os
 import time
 import random
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+from ahri.settings import MEDIA_ROOT, D
 from utils.data_server import Mongo
 
 
@@ -16,32 +16,47 @@ def hello(request):
     col = mongo.col('article', 'category')
     a_col = mongo.col('article', 'article')
     u_col = mongo.col('user', 'user')
-    print(request.POST.get('user'))
-    if request.POST.get('type') == 'e':
-        try:
-            article = col.find_one({"_id": ObjectId(request.GET.get('_id'))})
-            # return Response({'code': 200, 'msg': 'success', 'data': json_util.dumps(article)})
-            return render(request, 'editor/ckeditor/index.html')
-        except Exception as e:
-            return render(request, 'editor/ckeditor/index.html')
-    else:
+    if request.POST.get('type') == 'n':
         try:
             user_id = request.POST.get('user', None)
             user = u_col.find_one({"_id": ObjectId(user_id)})
-            if not user:
+            if user:
                 if user['role'] == 100:
                     category = col.find()
                 else:
                     category = col.find({"author": ObjectId(user_id)})
                 a = []
                 for i in category:
-                    i['author_name'] = u_col.find_one({"_id": ObjectId(i['author'])})['username']
+                    # i['author_name'] = u_col.find_one({"_id": ObjectId(i['author'])})['username']
+                    i['id'] = i['_id']
                     a.append(i)
-                print(a)
-                return render(request, 'editor/ckeditor/index.html', context={'data': a})
+                return render(request, 'editor/ckeditor/index.html',
+                              context={'data': a, 'art': False, 'username': user['username'], 'user_id': user['_id']})
             else:
-                return redirect("http://baidu.com")
-                return render(request, 'editor/ckeditor/index.html')
+                # return redirect("http://192.168.1.2:8080/#/admin")
+                return redirect("https://www.aaahri.com/#/admin/article/")
+        except Exception as e:
+            return render(request, 'editor/ckeditor/index.html')
+    else:
+        try:
+            art = a_col.find_one({'_id': ObjectId(request.POST.get('type'))})
+            user_id = request.POST.get('user', None)
+            user = u_col.find_one({"_id": ObjectId(user_id)})
+            if user:
+                if user['role'] == 100:
+                    category = col.find()
+                else:
+                    category = col.find({"author": ObjectId(user_id)})
+                a = []
+                for i in category:
+                    i['id'] = i['_id']
+                    a.append(i)
+                return render(request, 'editor/ckeditor/index.html',
+                              context={'data': a, 'art': art, 'art_id': art['_id'], 'username': user['username'],
+                                       'user_id': user['_id']})
+            else:
+                # return redirect("http://192.168.1.2:8080/#/admin")
+                return redirect("https://www.aaahri.com/#/admin/article/")
         except Exception as e:
             return render(request, 'editor/ckeditor/index.html')
 
@@ -55,10 +70,9 @@ def upload(request):
     for i in r:
         ss += i
     name = ss + time.strftime('_%Y%m%d%H%M%S', time.localtime()) + os.path.splitext(name)[1]
-    with open(os.path.join(settings.MEDIA_ROOT, "A" + name), 'wb') as fp:
+    with open(os.path.join(MEDIA_ROOT + '/' + 'article', "A" + name), 'wb') as fp:
         for chunk in file.chunks():
             fp.write(chunk)
-        fp.close()
-    url = request.build_absolute_uri(settings.MEDIA_URL + "A" + name)
+    url = D + '/media/article/' + "A" + name
     s = "{\"uploaded\": true,\"url\": \"" + url + "\"}"
     return HttpResponse(s)

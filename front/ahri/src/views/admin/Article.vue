@@ -33,9 +33,17 @@
         <span class="col2">{{i.desc}}</span>
         <span class="col3">{{i.change_date}}</span>
         <span class="col4">
-          <button class="edit" @click="editArt(i._id)">{{$t('lang.article.edit')}}</button>
+          <button class="edit" @click="editArt(i._id, i.editor)">{{$t('lang.article.edit')}}</button>
           <button class="delete" @click="delArt(i._id)">{{$t('lang.article.delete')}}</button>
         </span>
+        <form id="go1" action="http://127.0.0.1:9000/editor/ckeditor/" method="post">
+          <input hidden type="text" name="user" v-model:value="user._id.$oid">
+          <input hidden id="art_id1" type="text" name="type" value="n">
+        </form>
+        <form id="go2" action="http://127.0.0.1:9000/editor/ckeditor/" method="post">
+          <input hidden type="text" name="user" v-model:value="user._id.$oid">
+          <input hidden id="art_id2" type="text" name="type" value="n">
+        </form>
       </div>
       <div class="msg" v-if="article.length == 0">{{$t('lang.article.msg')}}</div>
       <div class="paging" v-if="num > 1">
@@ -71,8 +79,34 @@ export default {
     };
   },
   methods: {
-    editArt(val) {
-      this.$router.push({ path: "/admin/newart", query: { id: val.$oid } });
+    editArt(val, editor) {
+      switch (editor) {
+        case "ckeditor":
+          if (confirm("该文章由 CKEditor 编写,是否使用 CKEditor 编辑?")) {
+            document.getElementById("art_id1").value = val.$oid;
+            document.getElementById("go1").submit();
+          } else {
+            this.$router.push({
+              path: "/admin/newart",
+              query: { id: val.$oid }
+            });
+          }
+          break;
+        case "wangeditor":
+          if (confirm("该文章由 wangEditor 编写,是否使用 wangEditor 编辑?")) {
+            document.getElementById("art_id2").value = val.$oid;
+            document.getElementById("go2").submit();
+          } else {
+            this.$router.push({
+              path: "/admin/newart",
+              query: { id: val.$oid }
+            });
+          }
+          break;
+        default:
+          this.$router.push({ path: "/admin/newart", query: { id: val.$oid } });
+          break;
+      }
     },
     delArt(val) {
       let self = this;

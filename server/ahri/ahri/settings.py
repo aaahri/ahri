@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '$lzbx*)&c!@d0u+7tfgm4se261+20ozg_1bw&^6@e*sqgdftq9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -163,10 +163,12 @@ UEDITOR_UPLOAD_TO_SERVER = True
 UEDITOR_UPLOAD_PATH = MEDIA_ROOT
 UEDITOR_CONFIG_PATH = os.path.join(BASE_DIR, 'static', 'editor', 'ueditor', 'ueditor', 'config.json')
 
-D = 'http://127.0.0.1:9000'
+# D = 'http://127.0.0.1:9000'
+D = 'https://www.0x0001.com'
+
 MONGO = {
     'host': '111.67.206.108',
-    'port': '27018',
+    'port': '27017',
     'user': 'root',
     'pass': 'Aa12345!'
 }

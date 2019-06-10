@@ -83,7 +83,6 @@ class ArticleView(APIView):
             user = json.loads(request.body)['user']
             if user:
                 article = json.loads(request.body)['article']
-                print(article)
                 if self.col.find_one({'title': article['title'], 'author': ObjectId(user['_id']['$oid'])}):
                     return Response({'code': 401, 'msg': '文章标题重复', 'data': {}})
                 cate = self.c_col.find_one({'_id': ObjectId(article['category'])})
@@ -119,12 +118,15 @@ class ArticleView(APIView):
             if user:
                 article = json.loads(put.get('article'))
                 _id = article.pop('_id')
-                article['category'] = ObjectId(article['category'])
-                # if self.col.find_one({'title': article['title'], 'author': ObjectId(user['_id']['$oid'])}):
-                #     return Response({'code': 401, 'msg': '文章标题重复', 'data': {}})
-                article['author'] = ObjectId(article['author']['$oid'])
                 article['change_date'] = time.strftime('%Y-%m-%d', time.localtime(time.time()))
-                self.col.update({"_id": ObjectId(_id)}, {'$set': article})
+                data = {'title': article['title'],
+                        'category': ObjectId(article['category']),
+                        'thumbnail': article['thumbnail'],
+                        'desc': article['desc'],
+                        'content': article['content'],
+                        'change_date': time.strftime('%Y-%m-%d', time.localtime(time.time()))
+                        }
+                self.col.update({"_id": ObjectId(_id)}, {'$set': data})
                 return JsonResponse({'code': 200, 'msg': '成功', 'data': {}})
             else:
                 return JsonResponse({'code': 400, 'msg': '用户验证失败！', 'data': {}})

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <title>AHRI - CKEditor</title>
     <script src="{% static 'editor/ckeditor/ckeditor.js' %}"></script>
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <style>
@@ -11,36 +11,139 @@
             overflow-x: hidden;
         }
 
-        #editor {
-            height: 500px;
+        .give_up{
+            margin: 15px;
+            width: 120px;
         }
 
         .ck-editor__editable {
-            min-height: 500px;
+        {#min-height: 500px;#}
+        }
+
+        .content {
+            padding: 20px;
+            border: 1px solid #000;
+        }
+
+        .btnUpload {
+            width: 100%;
+        }
+
+        .publish {
+            float: right;
+            width: 200px;
+            margin: 16px;
+        }
+
+        .col-sm-12 {
+            padding: 0;
+        }
+
+        #file {
+            display: none;
         }
     </style>
 </head>
 <body>
-<label for="editor"></label>
-{#<a href="http://192.168.1.2:8080/#/admin">{{ data }}</a>#}
-
+<a class="btn btn-default give_up" href="https://www.aaahri.com/#/admin/article/">放弃</a>
+<input type="hidden" id="user_id" value="{{ user_id }}">
+<input type="hidden" id="username" value="{{ username }}">
 <div class="container-fluid">
-    <select class="form-control">
-        {% for datum in data %}
-            <option>{{ datum.name }}</option>
-        {% endfor %}
-    </select>
+    <div class="row">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8 content">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="title" class="col-sm-2 control-label">标题</label>
+                    <div class="col-sm-10">
+                        {% if art %}
+                            <input type="text" class="form-control" value="{{ art.title }}" id="title"
+                                   placeholder="Title">
+                        {% else %}
+                            <input type="text" class="form-control" id="title" placeholder="Title">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cate" class="col-sm-2 control-label">分类</label>
+                    <div class="col-sm-10">
+                        <select id="cate" class="form-control">
+                            {% if art %}
+                                {{ art.content }}
+                                {% for datum in data %}
+                                    {% if art.category == datum.id %}
+                                        <option value="{{ datum.id }}" selected>{{ datum.name }}</option>
+                                    {% else %}
+                                        <option value="{{ datum.id }}">{{ datum.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for datum in data %}
+                                    <option value="{{ datum.id }}">{{ datum.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cate" class="col-sm-2 control-label">缩略图</label>
+                    <div class="col-sm-8">
+                        {% if art %}
+                            <input type="text" class="form-control" id="thumbnail" value="{{ art.thumbnail }}"
+                                   placeholder="Thumbnail">
+                        {% else %}
+                            <input type="text" class="form-control" id="thumbnail" value="{{ data.0.thumbnail }}"
+                                   placeholder="Thumbnail">
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="file" class="btn btn-default btnUpload">上传</label>
+                        <input id="file" type="file" onchange="upload()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="desc" class="col-sm-2 control-label">描述</label>
+                    <div class="col-sm-10">
+                        {% if art %}
+                            <textarea id="desc" class="form-control" rows="3"
+                                      placeholder="Desc">{{ art.desc }}</textarea>
+                        {% else %}
+                            <textarea id="desc" class="form-control" rows="3" placeholder="Desc"></textarea>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+            <br>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="editor"></label>
+                    <textarea name="content" id="editor">
+                        {% if art %}
+                            {{ art.content }}
+                        {% else %}
+                            <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+                        {% endif %}
+                    </textarea>
+                </div>
+            </div>
+            {% if art %}
+                <button class="btn btn-default publish" onclick="edit()">提交更改</button>
+            {% else %}
+                <button class="btn btn-default publish" onclick="pub()">发表文章</button>
+            {% endif %}
+        </div>
+        <div class="col-xs-2"></div>
+    </div>
+    <br><br><br><br>
+    <input type="hidden" id="art_id" value="{{ art_id }}">
 </div>
-<br><br><br><br>
-<textarea name="content" id="editor">
-        &lt;p&gt;Here goes the initial content of the editor.&lt;/p&gt;
-</textarea>
+<script src="{% static 'jquery.min.js' %}"></script>
 <script>
     let editor;
     ClassicEditor
         .create(document.querySelector('#editor'), {
             ckfinder: {
-                uploadUrl: 'ckeditor/upload?command=QuickUpload&type=Files&responseType=json'
+                uploadUrl: '/editor/ckeditor/upload/?command=QuickUpload&type=Files&responseType=json'
             },
             language: 'zh-cn',
         }).then(newEditor => {
@@ -49,6 +152,104 @@
         .catch(error => {
             console.log(error);
         });
+
+    function upload() {
+        let formData = new FormData();
+        formData.append("thumbnail", $("#file")[0].files[0]);
+        formData.append("username", $("#username").val());
+        $.ajax({
+            url: "https://www.0x0001.com/api/article/",
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $("#thumbnail").val(data.url);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function pub() {
+        let art = {
+            _id: "",
+            title: $("#title").val(),
+            desc: $("#desc").val(),
+            category: $("#cate").val(),
+            thumbnail: $("#thumbnail").val(),
+            content: editor.getData(),
+            editor: "ckeditor"
+        };
+        let user = {
+            _id: {
+                $oid: $("#user_id").val()
+            },
+            username: $("#username").val()
+        };
+        $.ajax({
+            url: "https://www.0x0001.com/api/article/",
+            type: 'POST',
+            data: JSON.stringify({
+                article: art,
+                user: user
+            }),
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code === 200) {
+                    window.location.href = "https://www.aaahri.com/#/admin/article/";
+                } else {
+                    alert("ERROR!" + data.msg);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function edit() {
+        let art = {
+            _id: $("#art_id").val(),
+            title: $("#title").val(),
+            desc: $("#desc").val(),
+            category: $("#cate").val(),
+            thumbnail: $("#thumbnail").val(),
+            content: editor.getData(),
+            editor: "ckeditor"
+        };
+        let user = {
+            _id: {
+                $oid: $("#user_id").val()
+            },
+            username: $("#username").val()
+        };
+        $.ajax({
+            url: "http://127.0.0.1:9000/api/article/",
+            type: "PUT",
+            data: {
+                article: JSON.stringify(art),
+                user: JSON.stringify(user),
+                editor: "ckeditor"
+            },
+            headers: {
+                "Content-Type": "application/json",
+                "X-HTTP-Method-Override": "PUT"
+            },
+            success: function (data) {
+                if (data.code === 200) {
+                    window.location.href = "https://www.aaahri.com/#/admin/article/";
+                } else {
+                    alert("ERROR!" + data.msg);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 </script>
 </body>
 </html>
